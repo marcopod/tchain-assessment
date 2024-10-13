@@ -3,7 +3,20 @@
 
 Este proyecto es una evaluación técnica para **TChain**, desarrollado usando **Next.js**. A continuación, se encuentran las instrucciones para configurar, ejecutar y desplegar el proyecto, junto con las variables de entorno requeridas para la integración con Stripe.
 
-## Comenzando
+# Abordaje del assessment
+1. Crear un CRUD de productos usando Next.js y React
+Empecé por el diseño con un wireframe, considerando las necesidades minimas del proyecto, integrando el CRUD en una sola vista. La visualización de los productos (hardcodeados) vino primero, seguida por la creación, modificación y eliminación de estos.
+Consideré manejar memoria local para mantener un orden de los productos aún después de modificarlos/eliminarlos, pero al no ser parte de los requerimientos no lo implementé. Igualmente, no se desarrolló un panel de admin, que generalmente manejaría gran parte de las acciones hechas con los productos, unicamente permitiendo al usuario la visualización y compra de estos.
+
+Implementé una librería de componentes visuales prefabricados llamada `Nextui.org`, la cual permitió el desarrollo optimizado del front.
+
+2. Integración básica con Stripe
+Hacía mucho que no había usado Stripe, por lo que le di una refrescada, seguí este medium `https://medium.com/@josh.ferriday/intergrating-stripe-payments-with-next-app-router-9e9ba130f101` para poder implementar Stripe sin ningún problema con Next.js 14. Aquí fue donde más batallé por la falta de documentación de Stripe con Next.js.
+
+Originalmente iba a usar servicios para llamar a Stripe, pero la integración con server actions de Nextjs fue suficientemente directa.
+
+3. Refactorización y deployment
+Al ser un proyecto ligero, decidí darle una retocada a los componentes y el código, finalmente lo deployé a Vercel para tener una visualización directa del proyecto sin tener que correrlo localmente.
 
 ### Requisitos previos
 Asegúrate de tener lo siguiente instalado:
