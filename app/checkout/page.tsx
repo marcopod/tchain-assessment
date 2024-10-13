@@ -1,10 +1,9 @@
 import { CheckoutForm } from "./CheckoutForm"
 import { NextUIProvider, Navbar, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
 
+// Codigo del producto hardcodeado
+const priceId = process.env.NEXT_STRIPE_PRICE_ID as string;
 const CheckoutPage = () => {
-    // Codigo del producto hardcodeado
-    const priceId = 'price_1Q9GFM2L610zh1yMwpqh9DQw'
-
     return (
         <NextUIProvider>
             <main>
