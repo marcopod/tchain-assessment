@@ -10,7 +10,7 @@ Asegúrate de tener lo siguiente instalado:
 - **Node.js**: Puedes descargar la versión más reciente desde [https://nodejs.org/](https://nodejs.org/).
 - **npm**: npm viene incluido con Node.js, así que debería estar disponible tras la instalación de Node.
 
-### Instrucciones de configuración
+### Instrucciones
 1. **Clonar el repositorio**:
    - Ejecuta el comando: `git clone https://github.com/marcopod/tchain-assessment.git`
    - Navega al directorio del proyecto: `cd tchain-assessment`
