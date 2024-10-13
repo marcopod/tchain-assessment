@@ -33,3 +33,9 @@ Se necesitan las siguientes variables de entorno para la integración adecuada c
 
 - **NEXT_STRIPE_PRICE_ID**: Este es el ID de precio de Stripe para el producto o servicio que estás vendiendo.
   `NEXT_STRIPE_PRICE_ID=price_1Q9GFM2L610zh1yMwpqh9DQw`
+
+# Posibles mejoras a futuro
+- Panel de Admin para separar la creación, modificación y eliminación de productos
+- Integrar stripe para los pagos fuera de modo demo
+- Seleccionar varios productos
+- Agregar carrito de compras

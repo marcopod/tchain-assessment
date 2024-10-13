@@ -1,80 +1,96 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/react";
-import { Navbar, NavbarContent, NavbarItem, Button } from "@nextui-org/react";
-import { useDisclosure } from "@nextui-org/react";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import {
+  NextUIProvider,
+  Navbar,
+  NavbarContent,
+  NavbarItem,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Image,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  useDisclosure,
+} from "@nextui-org/react";
 import { useState } from "react";
 import * as CONSTANTS from "@/constants";
-import ProductCreationModal from "@/components/ProductCreationModal"; // Import the abstracted component
-import ProductInfoModal from "@/components/ProductInfoModal"; // Import the new abstracted ProductInfoModal
+import ProductCreationModal from "@/components/ProductCreationModal";
+import ProductInfoModal from "@/components/ProductInfoModal";
+
+type Product = {
+  title: string;
+  price: string;
+  description?: string;
+  img?: string;
+};
 
 export default function Home() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure(); // Disclosure for edit modal
+  const { isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+  const { isOpen: isProductOpen, onOpen: onProductOpen, onOpenChange: onProductOpenChange } = useDisclosure();
 
-  const { isOpen: isProductOpen, onOpen: onProductOpen, onOpenChange: onProductOpenChange } = useDisclosure(); // Disclosure for product info modal
+  // State management for product data
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [productList, setProductList] = useState<Product[]>(CONSTANTS.LIST);
 
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null); // Track index of the product being edited
-
-  const [productList, setProductList] = useState<any>(CONSTANTS.LIST);
-
-  const handleCreateProduct = () => {
-    if (name && price) {
-      const newProduct = {
-        title: name,
-        price: `$${price}`,
-        description,
-      };
-
-      setProductList([...productList, newProduct]);
-      setName('');
-      setPrice('');
-      setDescription('');
-    }
+  // Utility function to reset product form
+  const resetProductForm = () => {
+    setName("");
+    setPrice("");
+    setDescription("");
+    setEditingIndex(null);
   };
 
-  // Function to handle editing a product
-  const handleEditProduct = (index: number) => {
-    const productToEdit = productList[index];
-    setEditingIndex(index);
-    setName(productToEdit.title);
-    setPrice(productToEdit.price.replace("$", "")); // Remove the dollar sign for editing
-    setDescription(productToEdit.description || "");
-    onEditOpen(); // Open the edit modal
-  };
+  // Handle product creation or update
+  const handleCreateOrUpdateProduct = () => {
+    if (!name || !price) return; // Validate fields
 
-  // Function to handle updating the product after edit
-  const handleUpdateProduct = () => {
+    const product: Product = {
+      title: name,
+      price: `$${price}`,
+      description,
+      img: editingIndex !== null ? productList[editingIndex]?.img : undefined,
+    };
+
     if (editingIndex !== null) {
-      const updatedProductList = [...productList];
-      updatedProductList[editingIndex] = {
-        title: name,
-        price: `$${price}`,
-        img: productList[editingIndex].img,
-        description,
-      };
-      setProductList(updatedProductList);
-      setEditingIndex(null); // Clear editing state
-      setName('');
-      setPrice('');
-      setDescription('');
+      // Update existing product
+      const updatedList = [...productList];
+      updatedList[editingIndex] = product;
+      setProductList(updatedList);
+    } else {
+      // Create new product
+      setProductList([...productList, product]);
     }
+
+    resetProductForm();
   };
 
+  // Handle product edit
+  const handleEditProduct = (index: number) => {
+    const product = productList[index];
+    setName(product.title);
+    setPrice(product.price.replace("$", ""));
+    setDescription(product.description || "");
+    setEditingIndex(index);
+    onEditOpen();
+  };
+
+  // Handle product deletion
   const handleDeleteProduct = (index: number) => {
-    const updatedList = productList.filter((_: any, i: any) => i !== index);
-    setProductList(updatedList);
+    setProductList(productList.filter((_, i) => i !== index));
   };
 
-  // Function to open product details modal
-  const handleCardClick = (product: any) => {
+  // Handle product detail view
+  const handleCardClick = (product: Product) => {
     setSelectedProduct(product);
-    onProductOpen(); // Open product details modal
+    onProductOpen();
   };
 
   return (
@@ -84,7 +100,7 @@ export default function Home() {
           <NavbarContent justify="end">
             <NavbarItem>
               <Button onPress={onOpen} color="primary">Crear Producto</Button>
-              {/* Use the ProductCreationModal component for creating a product */}
+              {/* Modal for product creation */}
               <ProductCreationModal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -94,20 +110,21 @@ export default function Home() {
                 setPrice={setPrice}
                 description={description}
                 setDescription={setDescription}
-                handleCreateOrUpdateProduct={handleCreateProduct}
+                handleCreateOrUpdateProduct={handleCreateOrUpdateProduct}
                 modalType="create"
               />
             </NavbarItem>
           </NavbarContent>
         </Navbar>
+
         <main>
           <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
-            {productList.map((item: any, index: any) => (
+            {productList.map((item, index) => (
               <Card
                 shadow="sm"
                 key={index}
                 isPressable
-                onPress={() => handleCardClick(item)} // Pass the clicked product to handleCardClick and open modal
+                onPress={() => handleCardClick(item)}
               >
                 <div className="absolute top-2 right-2 z-20">
                   <Dropdown>
@@ -117,7 +134,7 @@ export default function Home() {
                       </div>
                     </DropdownTrigger>
                     <DropdownMenu
-                      aria-label="Static Actions"
+                      aria-label="Product Actions"
                       onAction={(key) => {
                         if (key === "edit") handleEditProduct(index);
                         if (key === "delete") handleDeleteProduct(index);
@@ -150,7 +167,8 @@ export default function Home() {
             ))}
           </div>
         </main>
-        {/* Use the ProductCreationModal for editing a product */}
+
+        {/* Modal for editing a product */}
         <ProductCreationModal
           isOpen={isEditOpen}
           onOpenChange={onEditOpenChange}
@@ -160,12 +178,13 @@ export default function Home() {
           setPrice={setPrice}
           description={description}
           setDescription={setDescription}
-          handleCreateOrUpdateProduct={handleUpdateProduct} // Handle update instead of create
+          handleCreateOrUpdateProduct={handleCreateOrUpdateProduct}
           modalType="edit"
         />
-        {/* Modal for displaying selected product information */}
+
+        {/* Modal for displaying selected product details */}
         <ProductInfoModal
-          isOpen={isProductOpen} // Ensure this opens when a card is clicked
+          isOpen={isProductOpen}
           onOpenChange={onProductOpenChange}
           product={selectedProduct}
         />
